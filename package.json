@@ -1,0 +1,26 @@
+{
+  "name": "dnodeserver_heroku",
+  "version": "0.0.1",
+  "description": "simple node server",
+  "main": "src/server/app.js",
+  "dependencies": {
+    "express": "^4.13.3",
+    "socket.io": "^1.4.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon src/server/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "5.5.0",
+    "npm": "3.5.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Krisztian Vegh",
+  "license": "ISC",
+  "homepage": ""
+}
