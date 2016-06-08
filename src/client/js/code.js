@@ -1,76 +1,47 @@
-/**
- * SHIM for RTCconnections
- */
-function createPeerConnection(config,optional) {
-	if (window.RTCPeerConnection) return new RTCPeerConnection(config,optional);
-	else if (window.webkitRTCPeerConnection) return new webkitRTCPeerConnection(config,optional);
-	else if (window.mozRTCPeerConnection) return new mozRTCPeerConnection(config,optional);
-	throw new Error("RTC Peer Connection not available");
-}
-
-function createIceCandidate(candidate) {
-	if (window.RTCIceCandidate) return new RTCIceCandidate(candidate);
-	else if (window.webkitRTCIceCandidate) return new webkitRTCIceCandidate(candidate);
-	else if (window.mozRTCIceCandidate) return new mozRTCIceCandidate(candidate);
-	throw new Error("RTC Ice Candidate not available");
-}
-
-function createSessionDescription(desc) {
-	if (window.RTCSessionDescription) return new RTCSessionDescription(desc);
-	else if (window.webkitRTCSessionDescription) return new webkitRTCSessionDescription(desc);
-	else if (window.mozRTCSessionDescription) return new mozRTCSessionDescription(desc);
-	throw new Error("RTC Session Description not available");
-}
-
-//////////////////////////////////////////////////
-
 var offererDataChannel, answererDataChannel;
 
-var peer = createPeerConnection(
-	{
-		iceServers: [
-			{ url: 'stun:stun.l.google.com:19302' },
-			{ url: 'stun:stun1.l.google.com:19302' },
-			{ url: 'turn:numb.viagenie.ca', username:"wood1y01@gmail.com", credential:"wood1y013321" }
-		]
-	},
-	{
-		optional: [
-			// FF/Chrome interop? https://hacks.mozilla.org/category/webrtc/as/complete/
-			{ DtlsSrtpKeyAgreement: true }
-		]
-	}
-);
+var peerOptions = 	{
+        iceServers: [
+            { url: 'stun:stun.l.google.com:19302' },
+            { url: 'stun:stun1.l.google.com:19302' },
+            { url: 'turn:numb.viagenie.ca', username:"wood1y01@gmail.com", credential:"wood1y013321" }
+        ]
+    };
 
 var Offerer = {
 
     createOffer: function () {
 
-        offererDataChannel = peer.createDataChannel('channel', {});
-        setChannelEvents(offererDataChannel);
+        var peer = new RTCPeerConnection(peerOptions);
 
-        peer.onicecandidate = function (event) {
-            if (event.candidate) {
-                // Send_to_Other_Peer(event.candidate);
-			}
-        };
+        var offer = peer.createOffer();
 
-        peer.createOffer(function (sdp) {
+        offer.then(function(sdp) {
             peer.setLocalDescription(sdp);
-            //Send_to_Other_Peer(sdp);
+            signal(sdp);
+            console.log('Offer:', sdp);
         });
 
-        this.peer = peer;
+        // offererDataChannel = peer.createDataChannel('channel', {});
+        // // console.log('OfferDataChannel: ', offererDataChannel);
+        // setChannelEvents(offererDataChannel);
 
+        // peer.onicecandidate = function (event) {
+        //     if (event.candidate) {
+        //         // Send_to_Other_Peer(event.candidate);
+        //     }
+        // };
+
+        this.peer = peer;
         return this;
     },
 
     setRemoteDescription: function (sdp) {
-        this.peer.setRemoteDescription(createSessionDescription(sdp));
+        this.peer.setRemoteDescription(new RTCSessionDescription(sdp));
     },
 
     addIceCandidate: function (candidate) {
-        this.peer.addIceCandidate(createIceCandidate({
+        this.peer.addIceCandidate(new RTCIceCandidate({
             sdpMLineIndex: candidate.sdpMLineIndex,
             candidate: candidate.candidate
         }));
@@ -81,21 +52,44 @@ var Answerer = {
 
     createAnswer: function (offerSDP) {
 
-        peer.ondatachannel = function (event) {
-            answererDataChannel = event.channel;
-            setChannelEvents(answererDataChannel);
-        };
+        var peer = new RTCPeerConnection(peerOptions);
 
-        peer.onicecandidate = function (event) {
-            if (event.candidate)
-                Send_to_Other_Peer(event.candidate);
-        };
+        function createRemoteDescription() {
+            return peer.setRemoteDescription(new RTCSessionDescription(offerSDP));
+        }
 
-        peer.setRemoteDescription(createSessionDescription(offerSDP));
-        peer.createAnswer(function (sdp) {
-            peer.setLocalDescription(sdp);
-            Send_to_Other_Peer(sdp);
-        });
+        function createAnswer() {
+            return peer.createAnswer();
+        }
+
+        createRemoteDescription()
+            .then(function() {
+                peer.createAnswer().then(function(answer) {
+                    signal(answer);
+                });
+            })
+            .catch(function(err) {
+                console.log(err);
+            });
+
+        // answer.then(function(sdp) {
+        //     peer.setLocalDescription(sdp);
+        //     signal(sdp);
+        //     console.log('Answer:', sdp);
+        // })
+        // .catch(function(err) {
+        //     console.log(err);
+        // });
+
+        // peer.ondatachannel = function (event) {
+        //     answererDataChannel = event.channel;
+        //     setChannelEvents(answererDataChannel);
+        // };
+
+        // peer.onicecandidate = function (event) {
+        //     if (event.candidate)
+        //         Send_to_Other_Peer(event.candidate);
+        // };
 
         this.peer = peer;
 
@@ -130,72 +124,32 @@ function setChannelEvents(channel) {
     };
 }
 
-
 /////////////////////  SIGNALING /////////////////
 
-var socket = io.connect('/rtc', {
-		"connect timeout": 3000,
-		"reconnect": false
-	});
+var socket = io.connect('http://192.168.1.169:3030');
 
-function signal(message) {
-    if(socket) {
-        socket.emit('signal', message);
-    }
+function signal(msg) {
+    socket.emit('signal', msg);
 }
 
-socket.on("hello", function(data){
-	//sockets
-});
+function onSignal(message) {
+    if (message.sdp) {
+        try {
+            console.log('Getting SDP');
+            Answerer.createAnswer(message);
+        }
+        catch (err) {
+            console.log(err.stack || err);
+        }
+    }
+    console.log(message);
+}
 
-// websocket.onmessage = function (e) {
-//     e = JSON.parse(e.data);
+socket.on('signal', onSignal);
 
-//     // Don't get self sent messages
-//     if (e.senderid == userid) return;
-
-//     var data = e.data;
-
-//     // if other user created offer; and sent you offer-sdp
-//     if (data.offerSDP) {
-//         window.answerer = Answerer.createAnswer(data.offerSDP);
-//     }
-
-//     // if other user created answer; and sent you answer-sdp
-//     if (data.answerSDP) {
-//         window.offerer.setRemoteDescription(data.answerSDP);
-//     }
-
-//     // if other user sent you ice candidates
-//     if (data.ice) {
-//         // it will be fired both for offerer and answerer
-//         (window.answerer || window.offerer).addIceCandidate(data.ice);
-//     }
-// };
-
-// var userid = Math.random() * 1000;
-
-// websocket.push = websocket.send;
-// websocket.send = function (data) {
-//     // wait/loop until socket connection gets open
-//     if (websocket.readState != 1) {
-//         // websocket connection is not opened yet.
-//         return setTimeout(function () {
-//             websocket.send(data);
-//         }, 500);
-//     }
-
-//     // data is stringified because websocket protocol accepts only string data
-//     var json_stringified_data = JSON.stringify({
-//         senderid: userid,
-//         data: data
-//     });
-
-//     websocket.push(json_stringified_data);
-// };
 
 $(document).ready(function () {
-	$('#offerer').on('click', function() {
-		Offerer.createOffer();
-	});
+    $('#offerer').on('click', function() {
+        Offerer.createOffer();
+    });
 });

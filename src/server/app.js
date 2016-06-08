@@ -1,34 +1,24 @@
-'use strict';
-
+var app = require('express')();
 var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
+var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-var http = require('http');
-var https = require('https');
-
-var port = process.env.PORT || 3030;
+server.listen(3030);
 
 app.use(express.static('./src/client/'));
-
-// https.createServer({
-//     key: fs.readFileSync('key.pem'),
-//     cert: fs.readFileSync('cert.pem')
-// }, app).listen(port, function () {
-//     console.log('Server running on port: ' + port);
-// });
 
 function connection(socket) {
 
 	function disconnect() {
-		console.log("Client disconnected!");
+		console.log("disconnected");
 	}
-	socket.on("disconnect", disconnect);
+
+	function onSignal(msg) {
+		console.log("relaying signal:", msg);
+		socket.broadcast.emit("signal", msg);
+	}
+	socket.on("disconnect",disconnect);
+	socket.on("signal",onSignal);
 }
 
-server.listen(port, function () {
-    console.log('Server running on port: ' + port);
-});
-
-io.of("/rtc").on("connection",connection);
+io.on('connection', connection);
