@@ -2,36 +2,38 @@ var offererDataChannel, answererDataChannel;
 
 var peerOptions = 	{
         iceServers: [
-            { url: 'stun:stun.l.google.com:19302' },
-            { url: 'stun:stun1.l.google.com:19302' },
-            { url: 'turn:numb.viagenie.ca', username:"wood1y01@gmail.com", credential:"wood1y013321" }
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'turn:numb.viagenie.ca', username:"wood1y01@gmail.com", credential:"wood1y013321" }
         ]
     };
 
+function createICECandidate(answerSDP) {
+    return new RTCIceCandidate(answerSDP);
+}
+
 var Offerer = {
-
     createOffer: function () {
-
         var peer = new RTCPeerConnection(peerOptions);
-
-        var offer = peer.createOffer();
-
+        offererDataChannel = peer.createDataChannel('channel', {});
+        setChannelEvents(offererDataChannel);
+        var offer = peer.createOffer({
+            mandatory: {
+                OfferToReceiveAudio: true
+            }
+        });
         offer.then(function(sdp) {
             peer.setLocalDescription(sdp);
             signal(sdp);
             console.log('Offer:', sdp);
         });
 
-        // offererDataChannel = peer.createDataChannel('channel', {});
-        // // console.log('OfferDataChannel: ', offererDataChannel);
-        // setChannelEvents(offererDataChannel);
 
-        // peer.onicecandidate = function (event) {
-        //     if (event.candidate) {
-        //         // Send_to_Other_Peer(event.candidate);
-        //     }
-        // };
-
+        peer.onicecandidate = function offerIceCandidate(event) {
+            signal({
+                candidate: event.candidate
+            });
+        };
         this.peer = peer;
         return this;
     },
@@ -40,18 +42,18 @@ var Offerer = {
         this.peer.setRemoteDescription(new RTCSessionDescription(sdp));
     },
 
-    addIceCandidate: function (candidate) {
-        this.peer.addIceCandidate(new RTCIceCandidate({
-            sdpMLineIndex: candidate.sdpMLineIndex,
-            candidate: candidate.candidate
-        }));
+    addIceCandidate: function (event) {
+        if (this.peer) {
+            this.peer.addIceCandidate(createICECandidate({
+                candidate: event.candidate,
+                sdpMLineIndex: event.sdpMLineIndex
+            }));
+        }
     }
 };
 
 var Answerer = {
-
     createAnswer: function (offerSDP) {
-
         var peer = new RTCPeerConnection(peerOptions);
 
         function createRemoteDescription() {
@@ -62,44 +64,40 @@ var Answerer = {
             return peer.createAnswer();
         }
 
-        createRemoteDescription()
-            .then(function() {
-                peer.createAnswer().then(function(answer) {
-                    signal(answer);
-                });
+        Promise.resolve()
+            .then(createRemoteDescription)
+            .then(createAnswer)
+            .then(function(answer) {
+                signal(answer);
+                peer.setLocalDescription(answer);
+                console.log(answer);
             })
             .catch(function(err) {
                 console.log(err);
             });
 
-        // answer.then(function(sdp) {
-        //     peer.setLocalDescription(sdp);
-        //     signal(sdp);
-        //     console.log('Answer:', sdp);
-        // })
-        // .catch(function(err) {
-        //     console.log(err);
-        // });
+        peer.ondatachannel = function (event) {
+            answererDataChannel = event.channel;
+            setChannelEvents(answererDataChannel);
+        };
 
-        // peer.ondatachannel = function (event) {
-        //     answererDataChannel = event.channel;
-        //     setChannelEvents(answererDataChannel);
-        // };
-
-        // peer.onicecandidate = function (event) {
-        //     if (event.candidate)
-        //         Send_to_Other_Peer(event.candidate);
-        // };
+        peer.onicecandidate = function offerIceCandidate(event) {
+            signal({
+                candidate: event.candidate
+            });
+        };
 
         this.peer = peer;
 
         return this;
     },
-    addIceCandidate: function (candidate) {
-        this.peer.addIceCandidate(createIceCandidate({
-            sdpMLineIndex: candidate.sdpMLineIndex,
-            candidate: candidate.candidate
-        }));
+    addIceCandidate: function (event) {
+        if (this.peer) {
+            this.peer.addIceCandidate(createICECandidate({
+                candidate: event.candidate,
+                sdpMLineIndex: event.sdpMLineIndex
+            }));
+        }
     }
 };
 
@@ -109,6 +107,7 @@ function setChannelEvents(channel) {
         console.log(data);
     };
     channel.onopen = function () {
+        console.log(channel, ' Opened');
         channel.push = channel.send;
         channel.send = function (data) {
             channel.push(JSON.stringify(data));
@@ -133,16 +132,24 @@ function signal(msg) {
 }
 
 function onSignal(message) {
+    if (message.candidate) {
+        Answerer.addIceCandidate(message.candidate);
+        Offerer.addIceCandidate(message.candidate);
+    }
+
     if (message.sdp) {
         try {
-            console.log('Getting SDP');
-            Answerer.createAnswer(message);
+            if (message.type === 'offer') {
+                Answerer.createAnswer(message);
+            }
+            else if (message.type === 'answer') {
+                Offerer.setRemoteDescription(message);
+            }
         }
         catch (err) {
             console.log(err.stack || err);
         }
     }
-    console.log(message);
 }
 
 socket.on('signal', onSignal);
