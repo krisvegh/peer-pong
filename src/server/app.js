@@ -7,6 +7,13 @@ server.listen(3030);
 
 app.use(express.static('./src/client/'));
 
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+
+app.get('/*', function (req, res) {
+	res.render('game');
+});
+
 function connection(socket) {
 
 	function disconnect() {
