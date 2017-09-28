@@ -1,4 +1,4 @@
-window.onload = function() {
+var Game = (function() {
 
     // RequestAnimFrame: a browser API for getting smooth animations
     window.requestAnimFrame = (function(){
@@ -69,7 +69,6 @@ window.onload = function() {
         // Paddle's position
         this.x = W/2 - this.w/2;
         this.y = (pos == "top") ? 0 : H - this.h;
-
     }
 
     // Push two new paddles into the paddles[] array
@@ -295,7 +294,7 @@ window.onload = function() {
 
         if(collision) {
             if(points > 0)
-                collision.pause();
+                // collision.pause();
 
             collision.currentTime = 0;
             collision.play();
@@ -395,7 +394,14 @@ window.onload = function() {
         }
     }
 
-    // Show the start screen
-    startScreen();
-};
+    var publicApi = {
+        startScreen
+    };
 
+    return publicApi;
+
+})();
+
+$(document).ready(function () {
+    Game.startScreen();
+});

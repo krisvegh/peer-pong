@@ -1,5 +1,5 @@
 {
-  "name": "dnodeserver_heroku",
+  "name": "peer-pong",
   "version": "0.0.1",
   "description": "simple node server",
   "main": "src/server/app.js",

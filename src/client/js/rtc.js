@@ -67,10 +67,11 @@ var RTC = (function () {
 
 var Offerer = (function () {
     var peer = RTC.createPeer();
-    var channelId = Math.floor(Math.random()*1000);
+    var channelId = Math.floor(Math.random()*1000 + 1000);
     var dataChannel = peer.createDataChannel('position', {
         reliable: false
     });
+    console.log('ChannelId: ' + channelId);
 
     function sendOffer() {
         RTC.thisPeer = 'offerer';
@@ -109,12 +110,12 @@ var Offerer = (function () {
         });
     };
 
-    dataChannel.onmessage = function () {
-
+    dataChannel.onmessage = function (e) {
+        console.log(`Offerer datatChannel onMessage: ${e.data}`);
     };
 
     dataChannel.onopen = function (e) {
-        console.log(e);
+        console.log(`Offerer datatChannel onOpen: ${e}`);
         clearInterval(sendOfferInterval);
     };
 
@@ -131,7 +132,8 @@ var Offerer = (function () {
         sendOffer,
         setRemoteDescription,
         dataChannel,
-        addIceCandidate
+        addIceCandidate,
+        channelId
     };
 
     return publicApi;
@@ -145,6 +147,7 @@ var Offerer = (function () {
 
 var Answerer = (function () {
     var peer = RTC.createPeer();
+    var pathId = Number(location.pathname.substring(1));
 
     function sendAnswer(offerSDP) {
         RTC.thisPeer = 'answerer';
@@ -156,7 +159,10 @@ var Answerer = (function () {
         peer.setRemoteDescription(new RTCSessionDescription(offerSDP))
             .then(createAnswer)
             .then(function (answer) {
-                Signal.send(answer);
+                Signal.send({
+                    sdp: answer,
+                    channelId: pathId
+                });
                 peer.setLocalDescription(answer);
             })
             .catch(function (err) {
@@ -167,8 +173,8 @@ var Answerer = (function () {
     peer.ondatachannel = function (event) {
         var dataChannel = event.channel;
 
-        dataChannel.onmessage = function () {
-
+        dataChannel.onmessage = function (e) {
+            console.log(e.data);
         };
 
         dataChannel.onopen = function (e) {
@@ -195,6 +201,7 @@ var Answerer = (function () {
 
     var publicApi = {
         peer,
+        pathId,
         sendAnswer,
         addIceCandidate
     };
@@ -209,9 +216,8 @@ var Answerer = (function () {
  ********************************/
 
 var Signal = (function () {
-    var pathId = Number(location.pathname.substring(1));
 
-    var socket = io.connect('http://192.168.1.169:3030');
+    var socket = io.connect('http://127.0.0.1:3030');
 
     socket.on('signal', onsignal);
 
@@ -223,11 +229,11 @@ var Signal = (function () {
 
         if (message.sdp) {
             try {
-                if (message.sdp.type === 'offer' && message.channelId === pathId) {
+                if (message.sdp.type === 'offer' && message.channelId === Answerer.pathId) {
                     Answerer.sendAnswer(message.sdp);
                 }
-                if (message.type === 'answer') {
-                    Offerer.setRemoteDescription(message);
+                if (message.sdp.type === 'answer' && message.channelId === Offerer.channelId) {
+                    Offerer.setRemoteDescription(message.sdp);
                 }
             }
             catch(err) {

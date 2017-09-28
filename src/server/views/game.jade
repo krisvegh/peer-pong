@@ -1,15 +1,21 @@
 doctype html
 html
-  head
-    meta(charset='UTF-8')
-    meta(name='viewport', content='width=device-width,initial-scale=1')
-    title RTC - pingpong
-    meta(name='description', content='description here')
-    // <link rel='stylesheet' href='css/style.css' type='text/css'>
-  body
-    button#offerer Offer
-    p
-    script(src='js/adapter.js')
-    script(src='/socket.io/socket.io.js')
-    script(src='js/jquery-2.1.4.min.js')
-    script(src='js/rtc.js')
+    head
+        meta(charset='UTF-8')
+        meta(name='viewport', content='width=device-width,initial-scale=1')
+        title WebRTC - pingpong
+        meta(name='description', content='description here')
+        meta(name='keywords', content='keywords,here')
+        link(rel='stylesheet', href='/game/game_style.css', type='text/css')
+    body
+        canvas#canvas
+        audio#collide(preload='true')
+            source(src='http://dl.dropbox.com/u/26141789/canvas/pingpong/Metal%20Cling%20-%20Hit.mp3')
+            source(src='http://dl.dropbox.com/u/26141789/canvas/pingpong/Metal%20Cling%20-%20Hit.wav')
+        script(src='js/jquery-2.1.4.min.js')
+        script(src='/js/gyronorm.complete.min.js')
+        script(src='/socket.io/socket.io.js')
+        script(src='js/adapter.js')
+        script(src='/game/game.js')
+        script(src='/js/rtc.js')
+        script(src='/js/app.js')
