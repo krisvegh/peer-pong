@@ -6,7 +6,8 @@
   "dependencies": {
     "express": "^4.13.3",
     "jade": "^1.11.0",
-    "socket.io": "^1.4.6"
+    "socket.io": "^1.4.6",
+    "webrtc-adapter": "^5.0.4"
   },
   "devDependencies": {},
   "scripts": {

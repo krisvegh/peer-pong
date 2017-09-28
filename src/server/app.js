@@ -2,16 +2,14 @@ var app = require('express')();
 var express = require('express');
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var path = require('path');
 
 server.listen(3030);
 
 app.use(express.static('./src/client/'));
 
-app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
-
 app.get('/*', function (req, res) {
-	res.render('game');
+	res.sendFile(path.join(__dirname, '../client/index.html'));
 });
 
 function connection(socket) {

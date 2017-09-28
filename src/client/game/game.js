@@ -41,7 +41,8 @@ var Game = (function() {
             restartBtn = {}, // Restart button object
             over = 0, // flag varialbe, cahnged when the game is over
             init, // variable to initialize animation
-            paddleHit;
+            paddleHit,
+            paddlePosition = 500;
 
     // Add mousemove and mousedown events to the canvas
     canvas.addEventListener("mousemove", trackPosition, true);
@@ -185,9 +186,10 @@ var Game = (function() {
         // Move the paddles on mouse move
         if(mouse.x && mouse.y) {
             for(var i = 1; i < paddles.length; i++) {
-                p = paddles[i];
-                p.x = mouse.x - p.w/2;
-            }
+                var p = paddles[i];
+                // p.x = mouse.x - p.w/2 + 10;
+                paddlePosition = p.x = paddlePosition - gameController.getDeviceMotion() * 2;
+              }
         }
 
         // Move the ball
@@ -343,7 +345,7 @@ var Game = (function() {
         ctx.fillText("Game Over - You scored "+points+" points!", W/2, H/2 + 25 );
 
         // Stop the Animation
-        cancelRequestAnimFrame(init);
+        // cancelRequestAnimFrame(init);
 
         // Set the over flag
         over = 1;
@@ -395,13 +397,10 @@ var Game = (function() {
     }
 
     var publicApi = {
-        startScreen
+        showStartScreen: startScreen,
+        start: animloop
     };
 
     return publicApi;
 
 })();
-
-$(document).ready(function () {
-    Game.startScreen();
-});

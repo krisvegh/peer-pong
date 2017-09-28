@@ -71,11 +71,9 @@ var Offerer = (function () {
     var dataChannel = peer.createDataChannel('position', {
         reliable: false
     });
-    console.log('ChannelId: ' + channelId);
 
     function sendOffer() {
         RTC.thisPeer = 'offerer';
-        $('body p').text(String(channelId)); // temp
         peer.createOffer()
             .then(function (sdp) {
                 peer.setLocalDescription(sdp);
@@ -111,11 +109,13 @@ var Offerer = (function () {
     };
 
     dataChannel.onmessage = function (e) {
-        console.log(`Offerer datatChannel onMessage: ${e.data}`);
+        // console.log(e.data);
+        if (e.data === 'start') gameController.start();
+        else gameController.setDeviceMotion(e.data);
     };
 
     dataChannel.onopen = function (e) {
-        console.log(`Offerer datatChannel onOpen: ${e}`);
+        infoBox.show('Connected!<br> Press start on you phone!');
         clearInterval(sendOfferInterval);
     };
 
@@ -148,6 +148,7 @@ var Offerer = (function () {
 var Answerer = (function () {
     var peer = RTC.createPeer();
     var pathId = Number(location.pathname.substring(1));
+    var dataChannel;
 
     function sendAnswer(offerSDP) {
         RTC.thisPeer = 'answerer';
@@ -171,21 +172,20 @@ var Answerer = (function () {
     }
 
     peer.ondatachannel = function (event) {
-        var dataChannel = event.channel;
-
-        dataChannel.onmessage = function (e) {
+        event.channel.onmessage = function (e) {
             console.log(e.data);
         };
 
-        dataChannel.onopen = function (e) {
-            console.log(e);
+        event.channel.onopen = function (e) {
+          publicApi.dataChannel = event.channel;
+          controller.init();
         };
 
-        dataChannel.onerror = function () {
+        event.channel.onerror = function () {
 
         };
 
-        dataChannel.onclose = function () {
+        event.channel.onclose = function () {
 
         };
     };
@@ -203,7 +203,8 @@ var Answerer = (function () {
         peer,
         pathId,
         sendAnswer,
-        addIceCandidate
+        addIceCandidate,
+        dataChannel
     };
 
     return publicApi;
@@ -217,7 +218,7 @@ var Answerer = (function () {
 
 var Signal = (function () {
 
-    var socket = io.connect('http://127.0.0.1:3030');
+    var socket = io.connect('http://192.168.1.4:3030');
 
     socket.on('signal', onsignal);
 
@@ -254,7 +255,5 @@ var Signal = (function () {
 })();
 
 $(document).ready(function () {
-    $('#offerer').on('click', function() {
-        Offerer.sendOffer();
-    });
+
 });
