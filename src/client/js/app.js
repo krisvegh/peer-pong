@@ -14,11 +14,16 @@ var infoBox = (function() {
 })();
 
 var gameController = (function() {
+  var velocity;
   var deviceMotion = 0;
 
   function setDeviceMotion(value) {
     deviceMotion = value;
-    console.log(value);
+    // console.log(value);
+  }
+
+  function restart() {
+    Game.restart();
   }
 
   function getDeviceMotion() {
@@ -33,7 +38,8 @@ var gameController = (function() {
   return {
     start,
     setDeviceMotion,
-    getDeviceMotion
+    getDeviceMotion,
+    restart
   };
 })();
 
@@ -45,12 +51,15 @@ var controller = (function() {
     $('.controller').on('click', function() {
       Answerer.dataChannel.send('start');
       bindMotionEvent();
+      $('.controller').on('click', function() {
+        Answerer.dataChannel.send('restart');
+      })
     });
 
     function bindMotionEvent() {
       window.addEventListener("devicemotion", handleMotionEvent, true);
       function handleMotionEvent(e) {
-        Answerer.dataChannel.send(e.acceleration.y);
+        Answerer.dataChannel.send(e.accelerationIncludingGravity.y);
       }
     }
   }

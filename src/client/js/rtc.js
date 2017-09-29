@@ -111,11 +111,12 @@ var Offerer = (function () {
     dataChannel.onmessage = function (e) {
         // console.log(e.data);
         if (e.data === 'start') gameController.start();
+        else if (e.data === 'restart') gameController.restart();
         else gameController.setDeviceMotion(e.data);
     };
 
     dataChannel.onopen = function (e) {
-        infoBox.show('Connected!<br> Press start on you phone!');
+        infoBox.show('<span style="color: green">Connected!</span><br> Press start on you phone!');
         clearInterval(sendOfferInterval);
     };
 
@@ -124,7 +125,7 @@ var Offerer = (function () {
     };
 
     dataChannel.onclose = function () {
-
+      infoBox.show('Disconnected');
     };
 
     var publicApi = {
@@ -218,7 +219,7 @@ var Answerer = (function () {
 
 var Signal = (function () {
 
-    var socket = io.connect('http://192.168.1.4:3030');
+    var socket = io.connect();
 
     socket.on('signal', onsignal);
 

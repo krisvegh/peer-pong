@@ -184,13 +184,11 @@ var Game = (function() {
         updateScore();
 
         // Move the paddles on mouse move
-        if(mouse.x && mouse.y) {
-            for(var i = 1; i < paddles.length; i++) {
-                var p = paddles[i];
-                // p.x = mouse.x - p.w/2 + 10;
-                paddlePosition = p.x = paddlePosition - gameController.getDeviceMotion() * 2;
-              }
-        }
+        for(var i = 1; i < paddles.length; i++) {
+            var p = paddles[i];
+            // p.x = mouse.x - p.w/2 + 10;
+            paddlePosition = p.x = paddlePosition - gameController.getDeviceMotion();
+          }
 
         // Move the ball
         ball.x += ball.vx;
@@ -345,12 +343,13 @@ var Game = (function() {
         ctx.fillText("Game Over - You scored "+points+" points!", W/2, H/2 + 25 );
 
         // Stop the Animation
-        // cancelRequestAnimFrame(init);
+        cancelRequestAnimFrame(init);
 
         // Set the over flag
         over = 1;
 
         // Show the restart button
+        infoBox.show(`You scored ${points} points.<br>Tap your mobile screen to restart.`);
         restartBtn.draw();
     }
 
@@ -364,6 +363,17 @@ var Game = (function() {
     function startScreen() {
         draw();
         startBtn.draw();
+      }
+
+    function restart() {
+        ball.x = 20;
+        ball.y = 20;
+        points = 0;
+        ball.vx = 4;
+        ball.vy = 8;
+        over = 0;
+        animloop();
+        infoBox.hide();
     }
 
     // On button click (Restart and start)
@@ -390,7 +400,6 @@ var Game = (function() {
                 ball.vx = 4;
                 ball.vy = 8;
                 animloop();
-
                 over = 0;
             }
         }
@@ -398,7 +407,8 @@ var Game = (function() {
 
     var publicApi = {
         showStartScreen: startScreen,
-        start: animloop
+        start: animloop,
+        restart
     };
 
     return publicApi;
