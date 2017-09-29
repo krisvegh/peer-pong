@@ -3,8 +3,9 @@ var express = require('express');
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var path = require('path');
+var port = process.env.PORT || 3040;
 
-server.listen(80);
+server.listen(port);
 
 app.use(express.static('./src/client/'));
 
