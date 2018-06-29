@@ -10,7 +10,7 @@ server.listen(port);
 app.use(express.static('./src/client/'));
 
 app.get('/*', function (req, res) {
-	res.sendFile(path.join(__dirname, '../client/index.html'));
+	res.sendFile(path.join(__dirname, '../client/ben10/index.html'));
 });
 
 function connection(socket) {

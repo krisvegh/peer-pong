@@ -1,0 +1,38 @@
+#game {
+	position: absolute;
+    z-index: 9000;
+    top: 10%;
+    left: 10%;
+    height: 80%;
+    width: 80%;
+}
+
+#game.locked {
+	pointer-events: none;
+}
+
+table {
+	width: 100%;
+    height: 100%;
+	border-collapse:collapse;
+}
+
+td {
+	background-color: black;
+	border: 3px solid white;
+	font-size:80px;
+	color:#ffffff;
+	border-radius: 10px 10px 10px 10px;
+}
+
+.O {
+	background-color: red;
+	background: url("../images/10\ Player\ 01.png") no-repeat center;
+	background-size: 80%;
+}
+
+.X {
+	background-color: blue;
+	background: url("../images/11\ player\ 02.png") no-repeat center;
+	background-size: 80%;
+}

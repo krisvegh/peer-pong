@@ -198,7 +198,7 @@ iframe {
 
 .yXzVEYTG {
     position: absolute;
-    display: none;
+    display: block;
     height: 44.833333333333336%;
     width: 90.75%;
     top: 28.25%;
@@ -212,7 +212,7 @@ iframe {
 
 .ZMajWxcn {
     position: absolute;
-    display: none;
+    display: block;
     height: 11.833333333333334%;
     width: 77.5%;
     top: 29.75%;
@@ -226,7 +226,7 @@ iframe {
 
 .axOhGlJz {
     position: absolute;
-    display: none;
+    display: block;
     height: 34.166666666666664%;
     width: 25.25%;
     top: 30.333333333333332%;
@@ -240,7 +240,7 @@ iframe {
 
 .sYsZuBxP {
     position: absolute;
-    display: none;
+    display: block;
     height: 13.666666666666666%;
     width: 37.25%;
     top: 55.166666666666664%;
@@ -254,7 +254,7 @@ iframe {
 
 .tyBsidid {
     position: absolute;
-    display: block;
+    display: none;
     height: 49.166666666666664%;
     width: 82.25%;
     top: 15.083333333333334%;
@@ -268,7 +268,7 @@ iframe {
 
 .brhsxEhU {
     position: absolute;
-    display: block;
+    display: none;
     height: 7.166666666666667%;
     width: 41.5%;
     top: 61.916666666666664%;
