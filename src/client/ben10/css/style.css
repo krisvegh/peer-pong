@@ -1,0 +1,253 @@
+html {
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.hidden {
+    visibility: hidden !important;
+}
+
+#wrapper {
+    top: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-transition: all .3s ease-in-out;
+       -moz-transition: all .3s ease-in-out;
+        -ms-transition: all .3s ease-in-out;
+            transition: all .3s ease-in-out;
+}
+
+.unit {
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+}
+
+.page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.resetanimation {
+    animation: none !important;
+}
+
+.slider-item {
+    max-width: 100%;
+    max-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slider-item * {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.text-input {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: none;
+    background-color: transparent;
+}
+
+.checkbox {
+    margin: 0;
+}
+
+.slide {
+    display: none;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.slick-slide img {
+    width: 100%;
+}
+
+.IIV::-webkit-media-controls-play-button,
+.IIV::-webkit-media-controls-start-playback-button {
+    opacity: 0;
+    pointer-events: none;
+    width: 5px;
+}
+
+.video-wrapper .controls {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    justify-content: center;
+}
+
+.video-wrapper .video-play {
+    cursor: pointer;
+    transition: transform .2s ease-out;
+    transform: scale(1);
+}
+
+.video-wrapper .center-icon {
+    position: absolute;
+    flex: 0 0 auto;
+    align-self: center;
+    width: 30%;
+}
+
+.video-wrapper .video-play.hide {
+    transform: scale(0);
+}
+
+.video-wrapper .video-sound {
+    position: absolute;
+    width: 10%;
+    max-width: 80px;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.video-wrapper video {
+    width: 100%;
+    height: 100%;
+}
+
+.video-wrapper .video-sound.off {
+    display: none;
+}
+
+.video-wrapper .center-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.video-wrapper .video-loading {
+    height: 100px;
+    animation: spin 1s infinite linear;
+    display: none;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.sZVNekKv {
+    width: 100vw;
+    max-width: 66.66666666666666vh;
+    height: 150vw;
+    max-height: 100vh;
+}
+
+.gCuXSmSs {
+    background-color: #fff;
+    background-size: contain;
+}
+
+.jxdrKhCy {
+    position: absolute;
+    display: block;
+    height: 100%;
+    width: 100%;
+    top: 0%;
+    left: 0%;
+    background-repeat: no-repeat;
+    background-image: url("../images/01%20BGR.png");
+    background-color: rgba(255, 255, 255, 0);
+    background-size: contain;
+    z-index: 0;
+}
+
+.iBIjykYH {
+    position: absolute;
+    display: block;
+    height: 100.33333333333333%;
+    width: 100.25%;
+    top: -0.16666666666666666%;
+    left: 0%;
+    background-repeat: no-repeat;
+    background-image: url("../images/02%20Dark%20layer.png");
+    background-color: rgba(255, 255, 255, 0);
+    background-size: contain;
+    z-index: 1;
+}
+
+.yXzVEYTG {
+    position: absolute;
+    display: block;
+    height: 44.833333333333336%;
+    width: 90.75%;
+    top: 28.25%;
+    left: 4.375%;
+    background-repeat: no-repeat;
+    background-image: url("../images/03%20POP%20UP%20BGR.png");
+    background-color: rgba(255, 255, 255, 0);
+    background-size: contain;
+    z-index: 2;
+}
+
+.ZMajWxcn {
+    position: absolute;
+    display: block;
+    height: 11.833333333333334%;
+    width: 77.5%;
+    top: 29.75%;
+    left: 22.5%;
+    background-repeat: no-repeat;
+    background-image: url("../images/04%20WAITING%20FOR%20OPPONENT.png");
+    background-color: rgba(255, 255, 255, 0);
+    background-size: contain;
+    z-index: 3;
+}
+
+.axOhGlJz {
+    position: absolute;
+    display: block;
+    height: 34.166666666666664%;
+    width: 25.25%;
+    top: 30.333333333333332%;
+    left: 21%;
+    background-repeat: no-repeat;
+    background-image: url("../images/06%20LOADING.gif");
+    background-color: rgba(255, 255, 255, 0);
+    background-size: contain;
+    z-index: 4;
+}
+
+.sYsZuBxP {
+    position: absolute;
+    display: block;
+    height: 13.666666666666666%;
+    width: 37.25%;
+    top: 55.166666666666664%;
+    left: 52.125%;
+    background-repeat: no-repeat;
+    background-image: url("../images/05%20send%20this%20linlk.png");
+    background-color: rgba(255, 255, 255, 0);
+    background-size: contain;
+    z-index: 5;
+}

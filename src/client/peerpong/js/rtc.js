@@ -83,7 +83,7 @@ var Offerer = (function () {
                 });
             });
     }
-    if (location.pathname === '/') {
+    if (location.pathname === '/peerpong/') {
         var sendOfferInterval = setInterval(function() {
             sendOffer();
         } , 3000);
