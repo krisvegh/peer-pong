@@ -198,7 +198,7 @@ iframe {
 
 .yXzVEYTG {
     position: absolute;
-    display: block;
+    display: none;
     height: 44.833333333333336%;
     width: 90.75%;
     top: 28.25%;
@@ -212,7 +212,7 @@ iframe {
 
 .ZMajWxcn {
     position: absolute;
-    display: block;
+    display: none;
     height: 11.833333333333334%;
     width: 77.5%;
     top: 29.75%;
@@ -226,7 +226,7 @@ iframe {
 
 .axOhGlJz {
     position: absolute;
-    display: block;
+    display: none;
     height: 34.166666666666664%;
     width: 25.25%;
     top: 30.333333333333332%;
@@ -240,7 +240,7 @@ iframe {
 
 .sYsZuBxP {
     position: absolute;
-    display: block;
+    display: none;
     height: 13.666666666666666%;
     width: 37.25%;
     top: 55.166666666666664%;
@@ -250,4 +250,32 @@ iframe {
     background-color: rgba(255, 255, 255, 0);
     background-size: contain;
     z-index: 5;
+}
+
+.tyBsidid {
+    position: absolute;
+    display: block;
+    height: 49.166666666666664%;
+    width: 82.25%;
+    top: 15.083333333333334%;
+    left: 8.875%;
+    background-repeat: no-repeat;
+    background-image: url("../images/07%20game%20over.png");
+    background-color: rgba(255, 255, 255, 0);
+    background-size: contain;
+    z-index: 6;
+}
+
+.brhsxEhU {
+    position: absolute;
+    display: block;
+    height: 7.166666666666667%;
+    width: 41.5%;
+    top: 61.916666666666664%;
+    left: 29.25%;
+    background-repeat: no-repeat;
+    background-image: url("../images/08%20replay.png");
+    background-color: rgba(255, 255, 255, 0);
+    background-size: contain;
+    z-index: 7;
 }

@@ -9,7 +9,7 @@ window.onload = function() {
     "expandingDirection": null,
     "device": "mobile",
     "published": false,
-    "totalSize": 436455
+    "totalSize": 556618
   };
   AAS.units = [{
     "unitId": "sZVNekKv",
