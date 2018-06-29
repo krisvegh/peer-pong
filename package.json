@@ -6,12 +6,13 @@
   "dependencies": {
     "express": "^4.13.3",
     "jade": "^1.11.0",
+    "nodemon": "^1.17.5",
     "socket.io": "^1.4.6",
     "webrtc-adapter": "^5.0.4"
   },
   "devDependencies": {},
   "scripts": {
-    "start": "nodemon src/server/app.js",
+    "start": "./node_modules/.bin/nodemon src/server/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
