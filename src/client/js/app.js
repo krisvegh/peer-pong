@@ -19,7 +19,6 @@ var gameController = (function() {
 
   function setDeviceMotion(value) {
     deviceMotion = value;
-    // console.log(value);
   }
 
   function restart() {
@@ -30,27 +29,35 @@ var gameController = (function() {
     return deviceMotion;
   }
 
-  function start() {
+  function startBall() {
+    Game.ball.start();
     infoBox.hide();
-    Game.start();
+  }
+
+  function run() {
+    Game.run();
   }
 
   return {
-    start,
+    run,
     setDeviceMotion,
     getDeviceMotion,
-    restart
+    restart,
+    startBall
   };
 })();
 
 var controller = (function() {
+
   function init() {
     infoBox.hide();
     $('#canvas').remove();
     $('.controller').show();
+    Answerer.dataChannel.send('run');
+    bindMotionEvent();
+
     $('.controller').on('click', function() {
-      Answerer.dataChannel.send('start');
-      bindMotionEvent();
+      Answerer.dataChannel.send('startBall');
       $('.controller').on('click', function() {
         Answerer.dataChannel.send('restart');
       })
@@ -58,9 +65,11 @@ var controller = (function() {
 
     function bindMotionEvent() {
       window.addEventListener("devicemotion", handleMotionEvent, true);
-      function handleMotionEvent(e) {
-        Answerer.dataChannel.send(e.accelerationIncludingGravity.y);
-      }
+    }
+
+    function handleMotionEvent(e) {
+      console.log('motion, ', e);
+      Answerer.dataChannel.send(e.accelerationIncludingGravity.y);
     }
   }
   return {

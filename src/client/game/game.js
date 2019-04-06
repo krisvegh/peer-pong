@@ -82,8 +82,8 @@ var Game = (function() {
         y: 50,
         r: 5,
         c: "white",
-        vx: 4,
-        vy: 8,
+        vx: 0,
+        vy: 0,
 
         // Function for drawing ball on canvas
         draw: function() {
@@ -91,6 +91,16 @@ var Game = (function() {
             ctx.fillStyle = this.c;
             ctx.arc(this.x, this.y, this.r, 0, Math.PI*2, false);
             ctx.fill();
+        },
+
+        start: function() {
+          this.vx = 4;
+          this.vy = 8;
+        },
+
+        stop: function() {
+          this.vx = 0;
+          this.vy = 0;
         }
     };
 
@@ -343,7 +353,7 @@ var Game = (function() {
         ctx.fillText("Game Over - You scored "+points+" points!", W/2, H/2 + 25 );
 
         // Stop the Animation
-        cancelRequestAnimFrame(init);
+        ball.stop();
 
         // Set the over flag
         over = 1;
@@ -407,8 +417,9 @@ var Game = (function() {
 
     var publicApi = {
         showStartScreen: startScreen,
-        start: animloop,
-        restart
+        run: animloop,
+        restart,
+        ball
     };
 
     return publicApi;

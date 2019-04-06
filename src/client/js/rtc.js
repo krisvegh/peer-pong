@@ -109,14 +109,16 @@ var Offerer = (function () {
     };
 
     dataChannel.onmessage = function (e) {
-        // console.log(e.data);
-        if (e.data === 'start') gameController.start();
+        console.log(e.data);
+        if (e.data === 'startBall') gameController.startBall();
+        else if (e.data === 'run') gameController.run();
         else if (e.data === 'restart') gameController.restart();
         else gameController.setDeviceMotion(e.data);
     };
 
     dataChannel.onopen = function (e) {
         infoBox.show('<span style="color: green">Connected!</span><br> Press start on you phone!');
+        gameController.run();
         clearInterval(sendOfferInterval);
     };
 

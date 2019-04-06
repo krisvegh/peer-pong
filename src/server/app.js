@@ -20,7 +20,7 @@ function connection(socket) {
 	}
 
 	function onSignal(msg) {
-		console.log("relaying signal:", msg);
+		console.log(msg);
 		socket.broadcast.emit("signal", msg);
 	}
 	socket.on("disconnect",disconnect);
